@@ -21,7 +21,7 @@ def home():
 
 @app.route('/<path:path>')
 def send_file(path):
-    return send_from_directory('', path)
+    return send_from_directory('.', path)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT",10000))
