@@ -4,7 +4,7 @@ import matplotlib
 matplotlib.use('Agg')
 
 # ✅ NEW ENGINE IMPORTS
-from main import start_game, next_turn, run_cli_game
+from main import start_game, next_turn
 import json
 
 app = Flask(__name__)
@@ -20,7 +20,7 @@ game_state = None
 # =========================
 @app.route("/")
 def home():
-    state = run_cli_game()
+    state = start_game()
 
 
 # =========================
