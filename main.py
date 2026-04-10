@@ -235,7 +235,8 @@ def run_cli_game():
         print("2:", scenario["neutral"]["text"])
         print("3:", scenario["bad"]["text"])
 
-        choice = input("Decision: ")
+        import random
+        choice = str(random.randint(1,3))
 
         if choice == "1":
             state = next_turn(state, "good")
@@ -245,3 +246,4 @@ def run_cli_game():
             state = next_turn(state, "bad")
 
     print(check_ending(state))
+    return state
