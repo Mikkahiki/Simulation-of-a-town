@@ -4,7 +4,7 @@ def export_results(state):
 
     data={
 
-    "temperature":round(state["temp"],2),
+    "temperature":round(state["temperature"],2),
 
     "co2":state["co2_tons"],
 

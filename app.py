@@ -3,12 +3,34 @@ import os
 import matplotlib
 matplotlib.use('Agg')
 
+
+
 # ✅ NEW ENGINE IMPORTS
 from main import start_game, next_turn
 import json
 
 app = Flask(__name__)
 
+
+import matplotlib.pyplot as plt
+from flask import Response
+import io
+
+@app.route("/graph")
+def graph():
+    global game_state
+
+    if game_state is None:
+        return "No data"
+
+    plt.figure()
+    plt.plot(game_state["co2_history"])
+
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+
+    return Response(img.getvalue(), mimetype='image/png')
 # =========================
 # GLOBAL GAME STATE
 # =========================
