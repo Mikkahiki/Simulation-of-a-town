@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Climate Simulation Game</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            width: 60%;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .good { background: #22c55e; }
+        .neutral { background: #eab308; }
+        .bad { background: #ef4444; }
+    </style>
+</head>
+<body>
+
+<h1>🌍 Climate Leadership Simulation</h1>
+
+<div class="card">
+    <h2>Day {{ state.day }}</h2>
+    <p>Economy: {{ state.economy }}</p>
+    <p>Public: {{ state.public }}</p>
+    <p>CO2: {{ state.co2_tons }}</p>
+    <p>Temperature: {{ state.temperature }}</p>
+</div>
+
+<div class="card">
+    <h2>{{ scenario.text }}</h2>
+
+    <form method="POST">
+        <button class="good" name="choice" value="good">
+            {{ scenario.good.text }}
+        </button>
+
+        <button class="neutral" name="choice" value="neutral">
+            {{ scenario.neutral.text }}
+        </button>
+
+        <button class="bad" name="choice" value="bad">
+            {{ scenario.bad.text }}
+        </button>
+    </form>
+</div>
+
+</body>
+</html>

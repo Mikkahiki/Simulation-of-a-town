@@ -434,4 +434,9 @@ def run_game():
 # START GAME
 # =========================
 
-run_game()
+def run_game():
+    state = create_state()
+    
+    # (everything else stays the same)
+
+    return state 
