@@ -51,7 +51,7 @@ def start_game():
     state = create_state()
     initialize_scenarios()
 
-    scenario = get_random_scenario()
+    scenario = get_random_scenario(state)
     state["current_scenario"] = scenario
 
     return state
@@ -81,7 +81,7 @@ def next_turn(state, choice_type):
 
     # NEXT SCENARIO
     if state["day"] <= 15:
-        state["current_scenario"] = get_random_scenario()
+        state["current_scenario"] = get_random_scenario(state)
     else:
         state["current_scenario"] = None
 
