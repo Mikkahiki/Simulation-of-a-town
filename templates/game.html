@@ -1,112 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Climate Game</title>
-    <style>
-        body {
-            background: #0b132b;
-            color: white;
-            font-family: Arial;
-            text-align: center;
-        }
+<title>Climate Game</title>
 
-        .card {
-            background: #1c2541;
-            padding: 20px;
-            margin: 20px auto;
-            width: 60%;
-            border-radius: 15px;
-        }
+<style>
+body{
+font-family:Arial;
+background:#0a1726;
+color:white;
+text-align:center;
+}
 
-        button {
-            display: block;
-            margin: 10px auto;
-            padding: 12px;
-            width: 60%;
-            font-size: 16px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-        }
+.card{
+background:#102a43;
+padding:20px;
+margin:20px auto;
+width:60%;
+border-radius:10px;
+}
 
-        .good { background: #2ecc71; }
-        .neutral { background: #f1c40f; }
-        .bad { background: #e74c3c; }
-    </style>
+button{
+padding:12px;
+margin:10px;
+font-size:16px;
+cursor:pointer;
+border:none;
+border-radius:6px;
+background:#2fa4ff;
+color:white;
+}
+</style>
+
 </head>
 
 <body>
 
-<h1>🌍 Climate Leadership Simulator</h1>
+<h1>🌍 Climate Simulation</h1>
 
 <div class="card">
-    <h2 id="day"></h2>
-    <p>🌡 Temp: <span id="temp"></span></p>
-    <p>🏭 CO2: <span id="co2"></span></p>
-    <p>💰 Economy: <span id="eco"></span></p>
-    <p>🙂 Public: <span id="pub"></span></p>
+
+<h2>Day {{ state.day }}</h2>
+
+<p>Temperature: {{ state.temperature }}</p>
+<p>CO₂: {{ state.co2_tons }}</p>
+<p>Economy: {{ state.economy }}</p>
+<p>Public: {{ state.public }}</p>
+
 </div>
 
 <div class="card">
-    <h2 id="scenario"></h2>
 
-    <button class="good" onclick="makeChoice('good')" id="goodBtn"></button>
-    <button class="neutral" onclick="makeChoice('neutral')" id="neutralBtn"></button>
-    <button class="bad" onclick="makeChoice('bad')" id="badBtn"></button>
+<h2>{{ scenario.title }}</h2>
+<p>{{ scenario.text }}</p>
+
+<a href="/decision/1"><button>{{ scenario.good.text }}</button></a>
+<a href="/decision/2"><button>{{ scenario.neutral.text }}</button></a>
+<a href="/decision/3"><button>{{ scenario.bad.text }}</button></a>
+
 </div>
-
-<script>
-
-let gameState = {};
-
-function startGame() {
-    fetch("/start", {method: "POST"})
-    .then(res => res.json())
-    .then(data => {
-        gameState = data;
-        updateUI();
-    });
-}
-
-function makeChoice(choice) {
-    fetch("/choice", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({choice: choice})
-    })
-    .then(res => res.json())
-    .then(data => {
-        gameState = data;
-        updateUI();
-    });
-}
-
-function updateUI() {
-
-    document.getElementById("day").innerText = "Day " + gameState.day;
-    document.getElementById("temp").innerText = gameState.temperature.toFixed(2);
-    document.getElementById("co2").innerText = gameState.co2_tons;
-    document.getElementById("eco").innerText = gameState.economy;
-    document.getElementById("pub").innerText = gameState.public;
-
-    if (!gameState.current_scenario) {
-        document.getElementById("scenario").innerText = "GAME OVER";
-        return;
-    }
-
-    let s = gameState.current_scenario;
-
-    document.getElementById("scenario").innerText = s.text;
-
-    document.getElementById("goodBtn").innerText = s.good.text || "Good Policy";
-    document.getElementById("neutralBtn").innerText = s.neutral.text || "Balanced Policy";
-    document.getElementById("badBtn").innerText = s.bad.text || "Risky Policy";
-}
-
-// auto start
-startGame();
-
-</script>
 
 </body>
 </html>
