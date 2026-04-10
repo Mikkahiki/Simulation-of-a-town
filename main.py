@@ -14,6 +14,42 @@ from export_data import export_results
 from graphs import dashboard
 
 
+# =========================
+# START GAME
+# =========================
+
+def start_game():
+    state = create_state()
+    initialize_scenarios()
+    return state
+
+
+# =========================
+# NEXT TURN (CORE ENGINE)
+# =========================
+
+def next_turn(state, choice_type):
+    
+    scenario = state.get("current_scenario")
+
+    if scenario:
+        selected = scenario[choice_type]
+
+        apply_choice(state, selected)
+        policy_tracker(state, selected)
+        log_decision(state, scenario, selected)
+
+        daily_update(state)
+        state["day"] += 1
+
+    # get next scenario
+    if state["day"] <= 15:
+        scenario = get_random_scenario()
+        state["current_scenario"] = scenario
+    else:
+        state["current_scenario"] = None
+
+    return state
 
 # =========================
 # CREATE GAME STATE
