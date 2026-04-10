@@ -19,7 +19,7 @@ game_state = None
 # =========================
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return "Game is working"
 
 
 # =========================
