@@ -1,61 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Climate Game</title>
+<meta charset="UTF-8">
+<title>Climate Command Center</title>
 
-<style>
-body{
-font-family:Arial;
-background:#0a1726;
-color:white;
-text-align:center;
-}
-
-.card{
-background:#102a43;
-padding:20px;
-margin:20px auto;
-width:60%;
-border-radius:10px;
-}
-
-button{
-padding:12px;
-margin:10px;
-font-size:16px;
-cursor:pointer;
-border:none;
-border-radius:6px;
-background:#2fa4ff;
-color:white;
-}
-</style>
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/game.js" defer></script>
 
 </head>
 
 <body>
 
-<h1>🌍 Climate Simulation</h1>
+<div class="topbar">
+    🌍 Climate Command Center
+</div>
 
-<div class="card">
+<div class="layout">
 
-<h2>Day {{ state.day }}</h2>
+<!-- LEFT: STATS -->
+<div class="panel">
 
-<p>Temperature: {{ state.temperature }}</p>
-<p>CO₂: {{ state.co2_tons }}</p>
-<p>Economy: {{ state.economy }}</p>
-<p>Public: {{ state.public }}</p>
+<h2>Live Stats</h2>
+
+<p>Day: <span id="day"></span></p>
+<p>Temperature: <span id="temp"></span></p>
+<p>CO₂: <span id="co2"></span></p>
+<p>Economy: <span id="eco"></span></p>
+<p>Public: <span id="pub"></span></p>
 
 </div>
 
-<div class="card">
 
-<h2>{{ scenario.title }}</h2>
-<p>{{ scenario.text }}</p>
+<!-- RIGHT: GAME -->
+<div class="panel main">
 
-<a href="/decision/1"><button>{{ scenario.good.text }}</button></a>
-<a href="/decision/2"><button>{{ scenario.neutral.text }}</button></a>
-<a href="/decision/3"><button>{{ scenario.bad.text }}</button></a>
+<h2 id="scenario-title"></h2>
+<p id="scenario-text"></p>
+
+<div class="choices">
+
+<button onclick="makeDecision(1)" id="choice1"></button>
+<button onclick="makeDecision(2)" id="choice2"></button>
+<button onclick="makeDecision(3)" id="choice3"></button>
+
+</div>
+
+</div>
 
 </div>
 

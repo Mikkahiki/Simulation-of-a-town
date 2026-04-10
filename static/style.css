@@ -1,0 +1,48 @@
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0a1726;
+    color:white;
+    }
+    
+    .topbar{
+    background:#0f2f4d;
+    padding:20px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+    }
+    
+    .layout{
+    display:flex;
+    height:90vh;
+    }
+    
+    .panel{
+    background:#102a43;
+    padding:20px;
+    margin:15px;
+    border-radius:12px;
+    flex:1;
+    box-shadow:0 0 15px rgba(0,0,0,0.4);
+    }
+    
+    .main{
+    flex:2;
+    }
+    
+    button{
+    width:100%;
+    padding:15px;
+    margin-top:10px;
+    font-size:16px;
+    border:none;
+    border-radius:8px;
+    background:#2fa4ff;
+    color:white;
+    cursor:pointer;
+    }
+    
+    button:hover{
+    background:#1c7ed6;
+    }

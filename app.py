@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, redirect, url_for
 import os
 import matplotlib
 matplotlib.use('Agg')
 
-from main import create_state, apply_choice, daily_update
-from scenarios import get_random_scenario, initialize_scenarios
+# ✅ NEW ENGINE IMPORTS
+from main import start_game, next_turn
 
 app = Flask(__name__)
 
@@ -12,7 +12,6 @@ app = Flask(__name__)
 # GLOBAL GAME STATE
 # =========================
 game_state = None
-current_scenario = None
 
 
 # =========================
@@ -28,11 +27,9 @@ def home():
 # =========================
 @app.route("/start")
 def start():
-    global game_state, current_scenario
+    global game_state
 
-    game_state = create_state()
-    initialize_scenarios()
-    current_scenario = get_random_scenario()
+    game_state = start_game()
 
     return redirect(url_for("game"))
 
@@ -42,15 +39,17 @@ def start():
 # =========================
 @app.route("/game")
 def game():
-    global game_state, current_scenario
+    global game_state
 
     if game_state is None:
         return redirect(url_for("home"))
 
+    scenario = game_state.get("current_scenario")
+
     return render_template(
         "game.html",
         state=game_state,
-        scenario=current_scenario
+        scenario=scenario
     )
 
 
@@ -59,29 +58,20 @@ def game():
 # =========================
 @app.route("/decision/<choice>")
 def decision(choice):
-    global game_state, current_scenario
+    global game_state
 
     if game_state is None:
         return redirect(url_for("home"))
 
-    # Map choice
+    # Map choice to engine
     if choice == "1":
-        selected = current_scenario["good"]
+        game_state = next_turn(game_state, "good")
     elif choice == "2":
-        selected = current_scenario["neutral"]
+        game_state = next_turn(game_state, "neutral")
     else:
-        selected = current_scenario["bad"]
+        game_state = next_turn(game_state, "bad")
 
-    # Apply effects
-    apply_choice(game_state, selected)
-    daily_update(game_state)
-
-    game_state["day"] += 1
-
-    # Next scenario
-    current_scenario = get_random_scenario()
-
-    # End condition
+    # END CONDITION
     if game_state["day"] > 15:
         return redirect(url_for("end"))
 
@@ -95,11 +85,22 @@ def decision(choice):
 def end():
     global game_state
 
+    if game_state is None:
+        return redirect(url_for("home"))
+
     return render_template("end.html", state=game_state)
 
 
 # =========================
-# RUN
+# HEALTH CHECK (FOR RENDER)
+# =========================
+@app.route("/health")
+def health():
+    return "OK", 200
+
+
+# =========================
+# RUN LOCAL ONLY
 # =========================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
