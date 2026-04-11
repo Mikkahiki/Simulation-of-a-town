@@ -38,4 +38,8 @@ if(data.game_over){
     return;
 }
 
+if (data.game_over) {
+    window.location.href = "/end";
+}
+
 window.onload = loadGame;

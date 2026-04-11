@@ -481,5 +481,62 @@ def next_turn(state, choice_type):
 # START GAME
 # =========================
 
-if __name__ == "__main__":
-    run_game()
+def run_game():
+
+    while True:   # 🔁 loop for replay
+
+        state = create_state()
+
+        print_intro()
+        initialize_scenarios()
+
+        while state["day"] <= 15:
+
+            show_status(state)
+            scientific_report(state)
+
+            scenario = get_random_scenario()
+
+            print("\nSCENARIO")
+            print(scenario["title"])
+            print(scenario["text"])
+
+            print("\n1", scenario["good"]["text"])
+            print("2", scenario["neutral"]["text"])
+            print("3", scenario["bad"]["text"])
+
+            choice = input("\nDecision:")
+
+            if choice == "1":
+                selected = scenario["good"]
+            elif choice == "2":
+                selected = scenario["neutral"]
+            else:
+                selected = scenario["bad"]
+
+            apply_choice(state, selected)
+            policy_tracker(state, selected)
+            log_decision(state, scenario, selected)
+
+            daily_update(state)
+            state["day"] += 1
+
+        # ===== END GAME =====
+        ending = check_ending(state)
+
+        print("\nFINAL RESULT")
+        print(ending)
+
+        print("\nFINAL SCIENTIFIC REPORT")
+        carbon_report(state)
+        statistical_report(state)
+        full_analysis(state)
+        dashboard(state)
+        export_results(state)
+
+        # 🔁 REPLAY PROMPT
+        replay = input("\nPlay again? (y/n): ").lower()
+
+        if replay != "y":
+            print("Thanks for playing.")
+            break
