@@ -1,20 +1,25 @@
-from flask import Flask, render_template, redirect, url_for
 import os
+
 import matplotlib
+from flask import Flask, redirect, render_template, url_for
+
 matplotlib.use('Agg')
 
 
 
-# ✅ NEW ENGINE IMPORTS
-from main import start_game, next_turn
 import json
+
+# ✅ NEW ENGINE IMPORTS
+from main import next_turn, start_game
 
 app = Flask(__name__)
 
 
+import io
+
 import matplotlib.pyplot as plt
 from flask import Response
-import io
+
 
 @app.route("/graph")
 def graph():
