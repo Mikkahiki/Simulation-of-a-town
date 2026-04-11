@@ -64,7 +64,7 @@ def start():
     game_state = start_game()
     game_state["game_over"] = False
 
-    return redirect(url_for("game"))
+    return redirect("/")  # ✅ go back to index.html
 
 
 # =========================
