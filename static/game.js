@@ -24,4 +24,18 @@ async function makeDecision(choice){
 
 }
 
+if(data.game_over){
+
+    document.getElementById("scenario-title").innerText = "Simulation Complete";
+
+    document.getElementById("scenario-text").innerText =
+        data.state.ending + "\n\n" + data.state.analysis;
+
+    document.getElementById("choice1").style.display = "none";
+    document.getElementById("choice2").style.display = "none";
+    document.getElementById("choice3").style.display = "none";
+
+    return;
+}
+
 window.onload = loadGame;

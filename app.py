@@ -47,7 +47,7 @@ game_state = None
 # =========================
 @app.route("/")
 def home():
-    return redirect(url_for("start"))
+    return render_template("index.html")
 
 
 # =========================
@@ -144,9 +144,10 @@ def api_state():
         game_state["current_scenario"] = scenario
 
     return {
-        "state": game_state,
-        "scenario": scenario
-    }
+    "state": game_state,
+    "scenario": scenario,
+    "game_over": game_state.get("game_over", False)
+}
 
 
 @app.route("/api/decision/<choice>")

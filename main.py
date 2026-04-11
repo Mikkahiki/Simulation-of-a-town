@@ -20,44 +20,47 @@ def create_state():
 
     return {
 
-    "day":1,
+        # CORE GAME
+        "day": 1,
+        "phase": "Early",
+        "difficulty": 1,
 
-    "phase":"Early",
+        # MAIN VARIABLES
+        "economy": 60,
+        "public": 55,
+        "temperature": 1.2,
+        "co2_tons": 0,
 
-    "economy":60,
+        # CARBON SYSTEM
+        "carbon": create_carbon(),
+        "carbon_target": 140,
 
-    "public":55,
+        # RISK & CLIMATE
+        "climate_risk": 0,
+        "crisis_level": 0,
 
-    "carbon":create_carbon(),
+        # PLAYER DATA
+        "choices": [],
+        "decision_log": [],
+        "policies": [],
+        "policy_history": [],  # ✅ prevents crash in policy.py
 
-    "co2_tons":0,
+        # HISTORY TRACKING (for graphs + analysis)
+        "co2_history": [],
+        "eco_history": [],
+        "public_history": [],
+        "temp_history": [],
 
-    "temperature":1.2,
+        # EVENTS
+        "recent_events": [],
+        "current_scenario": None,
 
-    "climate_risk":0,
+        # GAME STATE
+        "game_over": False,
 
-    "difficulty":1,
-
-    "carbon_target":140,
-
-    "policies":[],
-
-    "decision_log":[],
-
-    "choices":[],
-
-    "co2_history":[],
-
-    "eco_history":[],
-
-    "public_history":[],
-
-    "temp_history":[],
-
-    "recent_events":[],
-
-    "crisis_level":0
-
+        # ENDGAME OUTPUT
+        "ending": "",
+        "analysis": ""
     }
 
 
@@ -431,14 +434,23 @@ def run_game():
 def start_game():
     state = create_state()
     initialize_scenarios()
+
+    from scenarios import get_random_scenario
+    state["current_scenario"] = get_random_scenario()
+
     return state
 
 #==========================
 # next turn choices
 #==========================
+
 def next_turn(state, choice_type):
 
-    scenario = get_random_scenario()
+    # 🚨 STOP GAME AT DAY 15
+    if state["day"] >= 15:
+        return state
+
+    scenario = state.get("current_scenario")
 
     if choice_type == "good":
         choice = scenario["good"]
@@ -454,7 +466,13 @@ def next_turn(state, choice_type):
     daily_update(state)
 
     state["day"] += 1
-    state["current_scenario"] = scenario
+
+    # 🚨 CHECK IF GAME ENDS
+    if state["day"] > 15:
+        state["game_over"] = True
+    else:
+        from scenarios import get_random_scenario
+        state["current_scenario"] = get_random_scenario()
 
     return state
 
