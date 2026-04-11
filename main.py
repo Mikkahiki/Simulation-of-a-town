@@ -432,12 +432,21 @@ def run_game():
 # START GAME (WEB)
 # ===========================
 def start_game():
-    state = create_state()
-    initialize_scenarios()
+    try:
+        state = create_state()
 
-    state["current_scenario"] = get_random_scenario()
+        initialize_scenarios()
 
-    return state
+        from scenarios import get_random_scenario
+        state["current_scenario"] = get_random_scenario()
+
+        print("Game started successfully")
+
+        return state
+
+    except Exception as e:
+        print("ERROR IN start_game:", e)
+        return create_state()
 
 
 # ===========================

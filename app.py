@@ -61,10 +61,13 @@ def home():
 def start():
     global game_state
 
-    game_state = start_game()
-    game_state["game_over"] = False
+    print("START ROUTE HIT")   # 👈 add this
 
-    return redirect("/")  # ✅ go back to index.html
+    game_state = start_game()
+
+    print("GAME STATE CREATED:", game_state)  # 👈 add this
+
+    return redirect(url_for("game"))
 
 
 # =========================
@@ -74,7 +77,10 @@ def start():
 def game():
     global game_state
 
+    print("GAME ROUTE HIT")
+
     if game_state is None:
+        print("No game state → redirecting home")
         return redirect(url_for("home"))
 
     scenario = game_state.get("current_scenario")
@@ -84,7 +90,6 @@ def game():
         state=game_state,
         scenario=scenario
     )
-
 
 # =========================
 # HANDLE DECISION (WEB PAGE)
