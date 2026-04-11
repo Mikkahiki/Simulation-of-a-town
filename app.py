@@ -91,6 +91,23 @@ def game():
         scenario=scenario
     )
 
+#==========================
+# GRAPHS MORE
+#==========================
+@app.route("/api/graphs")
+def api_graphs():
+    global game_state
+
+    if game_state is None:
+        return jsonify({"error": "No data"})
+
+    return jsonify({
+        "co2": game_state["co2_history"],
+        "temp": game_state["temp_history"],
+        "eco": game_state["eco_history"],
+        "pub": game_state["public_history"]
+    })
+    
 # =========================
 # HANDLE DECISION (WEB PAGE)
 # =========================

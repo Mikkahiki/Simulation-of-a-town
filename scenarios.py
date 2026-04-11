@@ -1,7 +1,6 @@
 """
-SCENARIO ENGINE
-Professional climate policy event system
-Fully compatible with main simulation engine
+REBALANCED SCENARIO ENGINE
+Balanced for realism + winnable gameplay
 """
 
 import random
@@ -10,20 +9,19 @@ import random
 # SCENARIO POOL
 # =========================
 
-scenarios=[
+scenarios = [
 
-# ENERGY
+# ================= ENERGY =================
 {
 "title":"Coal industry lobbying",
 "text":"Coal companies demand relaxed emission laws.",
 
 "good":{
 "text":"Reject lobbying and enforce emission limits",
-"eco":-3,
+"eco":-2,
 "pub":5,
 "type":"green",
-
-"carbon":{"energy":-8}
+"carbon":{"energy":-6}
 },
 
 "neutral":{
@@ -31,19 +29,16 @@ scenarios=[
 "eco":1,
 "pub":2,
 "type":"neutral",
-
 "carbon":{"energy":-2}
 },
 
 "bad":{
 "text":"Relax emission restrictions",
-"eco":6,
+"eco":5,
 "pub":-4,
 "type":"industrial",
-
-"carbon":{"energy":10}
+"carbon":{"energy":8}
 }
-
 },
 
 {
@@ -52,11 +47,10 @@ scenarios=[
 
 "good":{
 "text":"Invest heavily in renewables",
-"eco":4,
-"pub":6,
+"eco":3,
+"pub":5,
 "type":"green",
-
-"carbon":{"energy":-15}
+"carbon":{"energy":-8}
 },
 
 "neutral":{
@@ -64,19 +58,16 @@ scenarios=[
 "eco":2,
 "pub":2,
 "type":"neutral",
-
-"carbon":{"energy":-5}
+"carbon":{"energy":-3}
 },
 
 "bad":{
 "text":"Ignore technology",
-"eco":5,
-"pub":-3,
+"eco":4,
+"pub":-2,
 "type":"industrial",
-
-"carbon":{"energy":5}
+"carbon":{"energy":4}
 }
-
 },
 
 {
@@ -85,34 +76,30 @@ scenarios=[
 
 "good":{
 "text":"Tax fossil fuels",
-"eco":-2,
+"eco":-1,
 "pub":4,
 "type":"green",
-
-"carbon":{"energy":-6}
+"carbon":{"energy":-5}
 },
 
 "neutral":{
 "text":"Allow market adjustment",
-"eco":3,
+"eco":2,
 "pub":1,
 "type":"neutral",
-
-"carbon":{"energy":4}
+"carbon":{"energy":2}
 },
 
 "bad":{
 "text":"Encourage fossil expansion",
-"eco":7,
-"pub":-5,
+"eco":6,
+"pub":-4,
 "type":"industrial",
-
-"carbon":{"energy":12}
+"carbon":{"energy":7}
 }
-
 },
 
-# TRANSPORT
+# ================= TRANSPORT =================
 {
 "title":"EV transition debate",
 "text":"Debate on banning fuel vehicles.",
@@ -120,10 +107,9 @@ scenarios=[
 "good":{
 "text":"Phase out fuel cars",
 "eco":-2,
-"pub":3,
+"pub":4,
 "type":"green",
-
-"carbon":{"transport":-10}
+"carbon":{"transport":-7}
 },
 
 "neutral":{
@@ -131,19 +117,16 @@ scenarios=[
 "eco":1,
 "pub":1,
 "type":"neutral",
-
-"carbon":{"transport":-3}
+"carbon":{"transport":-2}
 },
 
 "bad":{
 "text":"Protect fuel car industry",
-"eco":5,
-"pub":-4,
+"eco":4,
+"pub":-3,
 "type":"industrial",
-
-"carbon":{"transport":9}
+"carbon":{"transport":6}
 }
-
 },
 
 {
@@ -155,8 +138,7 @@ scenarios=[
 "eco":2,
 "pub":5,
 "type":"green",
-
-"carbon":{"transport":-9}
+"carbon":{"transport":-6}
 },
 
 "neutral":{
@@ -164,33 +146,29 @@ scenarios=[
 "eco":1,
 "pub":2,
 "type":"neutral",
-
-"carbon":{"transport":-3}
+"carbon":{"transport":-2}
 },
 
 "bad":{
 "text":"Cancel funding",
-"eco":4,
+"eco":3,
 "pub":-3,
 "type":"industrial",
-
-"carbon":{"transport":6}
+"carbon":{"transport":5}
 }
-
 },
 
-# INDUSTRY
+# ================= INDUSTRY =================
 {
 "title":"Factory emission scandal",
 "text":"Major company caught polluting.",
 
 "good":{
 "text":"Fine company heavily",
-"eco":-3,
+"eco":-2,
 "pub":6,
 "type":"green",
-
-"carbon":{"industry":-11}
+"carbon":{"industry":-7}
 },
 
 "neutral":{
@@ -198,19 +176,16 @@ scenarios=[
 "eco":0,
 "pub":2,
 "type":"neutral",
-
-"carbon":{"industry":-4}
+"carbon":{"industry":-3}
 },
 
 "bad":{
 "text":"Ignore violation",
-"eco":6,
-"pub":-6,
+"eco":5,
+"pub":-5,
 "type":"industrial",
-
-"carbon":{"industry":13}
+"carbon":{"industry":8}
 }
-
 },
 
 {
@@ -222,8 +197,7 @@ scenarios=[
 "eco":3,
 "pub":4,
 "type":"green",
-
-"carbon":{"industry":-12}
+"carbon":{"industry":-7}
 },
 
 "neutral":{
@@ -231,33 +205,29 @@ scenarios=[
 "eco":2,
 "pub":1,
 "type":"neutral",
-
-"carbon":{"industry":-4}
+"carbon":{"industry":-3}
 },
 
 "bad":{
 "text":"Reject clean transition",
-"eco":5,
-"pub":-4,
+"eco":4,
+"pub":-3,
 "type":"industrial",
-
-"carbon":{"industry":7}
+"carbon":{"industry":5}
 }
-
 },
 
-# DISASTERS
+# ================= DISASTERS =================
 {
 "title":"Major flood",
 "text":"Extreme rain damages infrastructure.",
 
 "good":{
 "text":"Invest in resilience",
-"eco":-4,
+"eco":-3,
 "pub":6,
 "type":"adaptation",
-
-"carbon":{"industry":-5}
+"carbon":{"industry":-3}
 },
 
 "neutral":{
@@ -269,13 +239,11 @@ scenarios=[
 
 "bad":{
 "text":"Ignore climate causes",
-"eco":-6,
+"eco":-5,
 "pub":-5,
 "type":"failure",
-
-"carbon":{"industry":6}
+"carbon":{"industry":5}
 }
-
 },
 
 {
@@ -284,11 +252,10 @@ scenarios=[
 
 "good":{
 "text":"Heat response programs",
-"eco":-3,
+"eco":-2,
 "pub":5,
 "type":"adaptation",
-
-"carbon":{"energy":-6}
+"carbon":{"energy":-4}
 },
 
 "neutral":{
@@ -300,16 +267,14 @@ scenarios=[
 
 "bad":{
 "text":"Do nothing",
-"eco":-5,
+"eco":-4,
 "pub":-6,
 "type":"failure",
-
-"carbon":{"energy":8}
+"carbon":{"energy":6}
 }
-
 },
 
-# PUBLIC PRESSURE
+# ================= PUBLIC =================
 {
 "title":"Youth climate protest",
 "text":"Students demand climate action.",
@@ -319,8 +284,7 @@ scenarios=[
 "eco":-1,
 "pub":7,
 "type":"green",
-
-"carbon":{"energy":-7}
+"carbon":{"energy":-5}
 },
 
 "neutral":{
@@ -335,10 +299,8 @@ scenarios=[
 "eco":3,
 "pub":-7,
 "type":"authoritarian",
-
-"carbon":{"energy":5}
+"carbon":{"energy":4}
 }
-
 },
 
 {
@@ -350,8 +312,7 @@ scenarios=[
 "eco":-2,
 "pub":5,
 "type":"green",
-
-"carbon":{"energy":-6}
+"carbon":{"energy":-5}
 },
 
 "neutral":{
@@ -364,26 +325,23 @@ scenarios=[
 "bad":{
 "text":"Drop climate agenda",
 "eco":4,
-"pub":-6,
+"pub":-5,
 "type":"industrial",
-
-"carbon":{"energy":7}
+"carbon":{"energy":6}
 }
-
 },
 
-# TECHNOLOGY
+# ================= TECHNOLOGY =================
 {
 "title":"Battery innovation",
 "text":"Energy storage improves.",
 
 "good":{
 "text":"Fund battery rollout",
-"eco":4,
+"eco":3,
 "pub":5,
 "type":"green",
-
-"carbon":{"energy":-14}
+"carbon":{"energy":-8}
 },
 
 "neutral":{
@@ -391,19 +349,16 @@ scenarios=[
 "eco":2,
 "pub":2,
 "type":"neutral",
-
-"carbon":{"energy":-5}
+"carbon":{"energy":-3}
 },
 
 "bad":{
 "text":"Ignore innovation",
-"eco":5,
+"eco":4,
 "pub":-2,
 "type":"industrial",
-
-"carbon":{"energy":6}
+"carbon":{"energy":4}
 }
-
 },
 
 {
@@ -415,8 +370,7 @@ scenarios=[
 "eco":1,
 "pub":3,
 "type":"green",
-
-"carbon":{"industry":-10}
+"carbon":{"industry":-6}
 },
 
 "neutral":{
@@ -424,8 +378,7 @@ scenarios=[
 "eco":1,
 "pub":1,
 "type":"neutral",
-
-"carbon":{"industry":-3}
+"carbon":{"industry":-2}
 },
 
 "bad":{
@@ -433,13 +386,11 @@ scenarios=[
 "eco":3,
 "pub":-3,
 "type":"industrial",
-
-"carbon":{"industry":5}
+"carbon":{"industry":4}
 }
-
 },
 
-# AGRICULTURE
+# ================= AGRICULTURE =================
 {
 "title":"Methane regulation",
 "text":"Farm emissions reviewed.",
@@ -449,8 +400,7 @@ scenarios=[
 "eco":-2,
 "pub":4,
 "type":"green",
-
-"carbon":{"agriculture":-9}
+"carbon":{"agriculture":-6}
 },
 
 "neutral":{
@@ -458,8 +408,7 @@ scenarios=[
 "eco":1,
 "pub":1,
 "type":"neutral",
-
-"carbon":{"agriculture":-3}
+"carbon":{"agriculture":-2}
 },
 
 "bad":{
@@ -467,37 +416,28 @@ scenarios=[
 "eco":4,
 "pub":-4,
 "type":"industrial",
-
-"carbon":{"agriculture":8}
+"carbon":{"agriculture":5}
 }
-
 }
 
 ]
 
 # =========================
-# NO REPEAT SYSTEM
+# SCENARIO SYSTEM
 # =========================
 
-scenario_deck=[]
+scenario_deck = []
 
 def initialize_scenarios():
-
     global scenario_deck
-
-    scenario_deck=scenarios.copy()
-
+    scenario_deck = scenarios.copy()
     random.shuffle(scenario_deck)
 
-
 def get_random_scenario():
-
     global scenario_deck
 
-    if len(scenario_deck)==0:
-
-        scenario_deck=scenarios.copy()
-
+    if len(scenario_deck) == 0:
+        scenario_deck = scenarios.copy()
         random.shuffle(scenario_deck)
 
     return scenario_deck.pop(0)

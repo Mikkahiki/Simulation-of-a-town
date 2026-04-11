@@ -22,15 +22,24 @@ async function loadGame() {
         return;
     }
 
-    // ✅ SAFE CHECK for scenario
+    // ✅ WAIT if scenario not ready
     if (!data.scenario) {
         console.log("Scenario not ready yet...");
-        setTimeout(loadGame, 300); // retry
+        setTimeout(loadGame, 300);
         return;
     }
 
     // ✅ NORMAL GAME UPDATE
     document.getElementById("day").innerText = state.day;
-    document.getElementById("temp").innerText = state.temperature;
+    document.getElementById("temp").innerText = state.temperature.toFixed(2);
     document.getElementById("co2").innerText = state.co2_tons;
-    document.getElementById("eco")}
+    document.getElementById("eco").innerText = state.economy;
+    document.getElementById("pub").innerText = state.public;
+
+    document.getElementById("scenario-title").innerText = data.scenario.title;
+    document.getElementById("scenario-text").innerText = data.scenario.text;
+
+    document.getElementById("choice1").innerText = data.scenario.good.text;
+    document.getElementById("choice2").innerText = data.scenario.neutral.text;
+    document.getElementById("choice3").innerText = data.scenario.bad.text;
+}

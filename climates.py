@@ -270,28 +270,29 @@ def climate_report(state):
 
 def climate_update(state):
 
-    """
-    Main function called by main.py
-    """
-def climate_update(state):
+    co2 = state["co2_tons"]
 
-    warming = state["co2_tons"] * 0.002
+    # 🌍 baseline safe level
+    baseline = 120
 
+    # 🔥 warming depends on how far above baseline you are
+    warming = (co2 - baseline) * 0.003
+
+    # ❄️ recovery if below safe level
     recovery = 0
+    if co2 < baseline:
+        recovery = (baseline - co2) * 0.002
 
-    if state["co2_tons"] < 140:
-        recovery = 0.03
-
+    # net temperature change
     state["temperature"] += warming - recovery
 
-    state["temperature"] = max(0,state["temperature"])
-    
+    # clamp temperature
+    state["temperature"] = max(0.5, state["temperature"])
+
+    # other systems
     update_temperature(state)
-
     emission_feedback(state)
-
     apply_climate_effects(state)
-    
 
 
 

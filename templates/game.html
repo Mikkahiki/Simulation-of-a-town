@@ -25,8 +25,14 @@
         <p>Economy: <span id="eco"></span></p>
         <p>Public Support: <span id="pub"></span></p>
 
-        <h3>📈 Trend</h3>
+        <h3>📈 CO2</h3>
         <canvas id="co2Chart"></canvas>
+
+        <h3>💰 Economy</h3>
+        <canvas id="ecoChart"></canvas>
+
+        <h3>👥 Public</h3>
+        <canvas id="pubChart"></canvas>
     </div>
 
     <!-- MAIN PANEL -->
@@ -37,11 +43,14 @@
         <button onclick="makeDecision(1)" id="choice1"></button>
         <button onclick="makeDecision(2)" id="choice2"></button>
         <button onclick="makeDecision(3)" id="choice3"></button>
+
+        <h2>📊 Analysis</h2>
+        <p id="analysis"></p>
     </div>
 
     <!-- RIGHT PANEL -->
     <div class="panel">
-        <h2>🌡 Climate Graph</h2>
+        <h2>🌡 Temperature</h2>
         <canvas id="tempChart"></canvas>
 
         <h2>⚠ Risk</h2>
@@ -53,111 +62,164 @@
 <script src="/static/game.js"></script>
 
 <script>
-    let co2Chart;
-    let tempChart;
-    
-    function updateCharts(state){
-    
-        const co2Data = state.co2_history || [];
-        const tempData = state.temp_history || [];
-        const labels = co2Data.map((_,i)=>i+1);
-    
-        if(co2Chart){
-            co2Chart.destroy();
+let charts = {};
+
+function createChart(id, label, data){
+    if(charts[id]) charts[id].destroy();
+
+    charts[id] = new Chart(document.getElementById(id),{
+        type:"line",
+        data:{
+            labels:data.map((_,i)=>i+1),
+            datasets:[{
+                label:label,
+                data:data
+            }]
         }
-    
-        co2Chart = new Chart(document.getElementById("co2Chart"),{
-            type:"line",
-            data:{
-                labels:labels,
-                datasets:[{
-                    label:"CO2",
-                    data:co2Data
-                }]
-            }
-        });
-    
-        if(tempChart){
-            tempChart.destroy();
-        }
-    
-        tempChart = new Chart(document.getElementById("tempChart"),{
-            type:"line",
-            data:{
-                labels:labels,
-                datasets:[{
-                    label:"Temperature",
-                    data:tempData
-                }]
-            }
-        });
-    
-        let risk = "Low";
-    
-        if(state.temperature > 2.5){
-            risk = "Extreme";
-        } else if(state.temperature > 2){
-            risk = "High";
-        } else if(state.temperature > 1.5){
-            risk = "Moderate";
-        }
-    
-        document.getElementById("risk-text").innerText = risk;
+    });
+}
+
+function updateCharts(state){
+
+    const co2 = state.co2_history || [];
+    const temp = state.temp_history || [];
+    const eco = state.eco_history || [];
+    const pub = state.public_history || [];
+
+    createChart("co2Chart","CO2",co2);
+    createChart("tempChart","Temperature",temp);
+    createChart("ecoChart","Economy",eco);
+    createChart("pubChart","Public",pub);
+
+    // Risk
+    let risk = "Low";
+
+    if(state.temperature > 2.5){
+        risk = "Extreme";
+    } else if(state.temperature > 2){
+        risk = "High";
+    } else if(state.temperature > 1.5){
+        risk = "Moderate";
     }
-    
-    
-    // ✅ FIXED loadGame
-    async function loadGame(){
-    
-        const res = await fetch("/api/state");
-        const data = await res.json();
-    
-        const state = data.state;
-    
-        // ✅ HANDLE GAME OVER FIRST
-        if(data.game_over){
-    
-            document.getElementById("scenario-title").innerText = "Simulation Complete";
-    
-            document.getElementById("scenario-text").innerText =
-                (state.ending || "") + "\n\n" + (state.analysis || "");
-    
-            document.getElementById("choice1").style.display = "none";
-            document.getElementById("choice2").style.display = "none";
-            document.getElementById("choice3").style.display = "none";
-    
-            updateCharts(state);
-            return;
-        }
-    
-        // ✅ NORMAL GAME
-        document.getElementById("day").innerText = state.day;
-        document.getElementById("temp").innerText = state.temperature.toFixed(2);
-        document.getElementById("co2").innerText = state.co2_tons;
-        document.getElementById("eco").innerText = state.economy;
-        document.getElementById("pub").innerText = state.public;
-    
-        // ⚠️ SAFE scenario access
-        if(data.scenario){
-            document.getElementById("scenario-title").innerText = data.scenario.title;
-            document.getElementById("scenario-text").innerText = data.scenario.text;
-    
-            document.getElementById("choice1").innerText = data.scenario.good.text;
-            document.getElementById("choice2").innerText = data.scenario.neutral.text;
-            document.getElementById("choice3").innerText = data.scenario.bad.text;
-        }
-    
+
+    document.getElementById("risk-text").innerText = risk;
+
+    updateAnalysis(state);
+}
+
+function updateAnalysis(state){
+
+    const co2 = state.co2_history || [];
+    const temp = state.temp_history || [];
+    const eco = state.eco_history || [];
+
+    if(co2.length < 2) return;
+
+    let text = "";
+
+    let co2_change = co2[co2.length-1] - co2[0];
+
+    if(co2_change < 0){
+        text += "Emissions decreasing. ";
+    } else {
+        text += "Emissions increasing. ";
+    }
+
+    let temp_change = temp[temp.length-1] - temp[0];
+
+    if(temp_change > 0.5){
+        text += "Rapid warming detected. ";
+    } else {
+        text += "Temperature stable. ";
+    }
+
+    let corr = simpleCorrelation(co2, eco);
+
+    if(corr > 0.5){
+        text += "Economic growth is increasing emissions.";
+    } else if(corr < -0.5){
+        text += "Green growth achieved.";
+    } else {
+        text += "Weak economy-emissions link.";
+    }
+
+    document.getElementById("analysis").innerText = text;
+}
+
+function simpleCorrelation(x,y){
+
+    let n = x.length;
+
+    let sumX=0,sumY=0,sumXY=0,sumX2=0,sumY2=0;
+
+    for(let i=0;i<n;i++){
+        sumX+=x[i];
+        sumY+=y[i];
+        sumXY+=x[i]*y[i];
+        sumX2+=x[i]*x[i];
+        sumY2+=y[i]*y[i];
+    }
+
+    let num = (n*sumXY)-(sumX*sumY);
+    let den = Math.sqrt((n*sumX2-sumX*sumX)*(n*sumY2-sumY*sumY));
+
+    return den===0 ? 0 : num/den;
+}
+
+// =========================
+// MAIN GAME LOOP
+// =========================
+
+async function loadGame(){
+
+    const res = await fetch("/api/state");
+    const data = await res.json();
+
+    const state = data.state;
+
+    // GAME OVER
+    if(data.game_over){
+
+        document.getElementById("scenario-title").innerText = "Simulation Complete";
+
+        document.getElementById("scenario-text").innerText =
+            (state.ending || "") + "\n\n" + (state.analysis || "");
+
+        document.getElementById("choice1").style.display = "none";
+        document.getElementById("choice2").style.display = "none";
+        document.getElementById("choice3").style.display = "none";
+
         updateCharts(state);
+        return;
     }
-    
-    
-    // ✅ FIXED decision (prevents race issues)
-    async function makeDecision(choice){
-        await fetch("/api/decision/" + choice);
-        await loadGame();
+
+    // NORMAL
+    document.getElementById("day").innerText = state.day;
+    document.getElementById("temp").innerText = state.temperature.toFixed(2);
+    document.getElementById("co2").innerText = state.co2_tons;
+    document.getElementById("eco").innerText = state.economy;
+    document.getElementById("pub").innerText = state.public;
+
+    if(data.scenario){
+        document.getElementById("scenario-title").innerText = data.scenario.title;
+        document.getElementById("scenario-text").innerText = data.scenario.text;
+
+        document.getElementById("choice1").innerText = data.scenario.good.text;
+        document.getElementById("choice2").innerText = data.scenario.neutral.text;
+        document.getElementById("choice3").innerText = data.scenario.bad.text;
     }
-    
-    window.onload = loadGame;
-    </script>
+
+    updateCharts(state);
+}
+
+async function makeDecision(choice){
+    await fetch("/api/decision/" + choice);
+    await loadGame();
+}
+
+window.onload = loadGame;
+
+</script>
+
 </body>
 </html>

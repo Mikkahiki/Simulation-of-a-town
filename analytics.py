@@ -319,7 +319,54 @@ def interpret_statistics(state):
         )
 
     else:
-
         print(
         "Balanced decision behaviour."
         )
+
+def generate_analysis_text(state):
+    
+    """
+    Returns full analysis as a string (for web display)
+    """
+
+    sd = std_dev(state["co2_history"])
+
+    r = pearson_r(
+        state["co2_history"],
+        state["eco_history"]
+    )
+
+    chi = chi_square(state["choices"])
+
+    style = leadership_style(state["choices"])
+
+    result = []
+
+    result.append(f"Leadership style: {style}")
+    result.append(f"Carbon stability: {round(sd,2)}")
+    result.append(f"Economy vs emissions: {round(r,2)}")
+    result.append(f"Decision bias: {round(chi,2)}")
+
+    # Stability
+    if sd > 200:
+        result.append("Policy direction was highly unstable.")
+    elif sd > 100:
+        result.append("Moderate policy volatility detected.")
+    else:
+        result.append("Stable environmental direction.")
+
+    # Correlation
+    if r > 0.4:
+        result.append("Economic growth strongly linked to emissions.")
+    elif r < -0.4:
+        result.append("Green growth achieved.")
+    else:
+        result.append("Weak economic-emission link.")
+
+    # Bias
+    if chi > 5:
+        result.append("Strong ideological bias detected.")
+    else:
+        result.append("Balanced decision behaviour.")
+
+    return "\n".join(result)
