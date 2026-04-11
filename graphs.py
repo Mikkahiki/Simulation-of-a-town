@@ -64,7 +64,7 @@ def show_graphs(state):
 
     temp = state["temp_history"]
 
-    public = state["public_history"]
+    public = state["pub_history"]
 
     days = list(range(1,len(co2)+1))
 
@@ -390,7 +390,7 @@ def dashboard(state):
     plt.title("Temperature")
 
     plt.subplot(2,2,4)
-    plt.plot(state["public_history"])
+    plt.plot(state["pub_history"])
     plt.title("Public")
 
     plt.tight_layout()

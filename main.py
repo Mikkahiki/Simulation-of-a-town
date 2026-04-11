@@ -5,15 +5,12 @@ from carbon import *
 from climates import *
 from endings import check_ending
 from events import *
+from export_data import export_results
 from graphs import dashboard
 from policy import *
 from scenarios import get_random_scenario, initialize_scenarios
 from stats import *
 from ui import *
-from export_data import export_results
-from graphs import dashboard
-
-
 
 # =========================
 # CREATE GAME STATE
@@ -428,11 +425,43 @@ def run_game():
     dashboard(state)
     export_results(state)
 
+#==========================
+# start game function
+#==========================
+def start_game():
+    state = create_state()
+    initialize_scenarios()
+    return state
 
+#==========================
+# next turn choices
+#==========================
+def next_turn(state, choice_type):
+
+    scenario = get_random_scenario()
+
+    if choice_type == "good":
+        choice = scenario["good"]
+    elif choice_type == "neutral":
+        choice = scenario["neutral"]
+    else:
+        choice = scenario["bad"]
+
+    apply_choice(state, choice)
+    policy_tracker(state, choice)
+    log_decision(state, scenario, choice)
+
+    daily_update(state)
+
+    state["day"] += 1
+    state["current_scenario"] = scenario
+
+    return state
 
 
 # =========================
 # START GAME
 # =========================
 
-run_game()
+if __name__ == "__main__":
+    run_game()

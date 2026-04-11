@@ -47,7 +47,7 @@ game_state = None
 # =========================
 @app.route("/")
 def home():
-    state = start_game()
+    return redirect(url_for("start"))
 
 
 # =========================
@@ -126,6 +126,44 @@ def end():
 def health():
     return "OK", 200
 
+#==================
+# API things
+#===================
+@app.route("/api/state")
+def api_state():
+    global game_state
+
+    if game_state is None:
+        game_state = start_game()
+
+    scenario = game_state.get("current_scenario")
+
+    if scenario is None:
+        from scenarios import get_random_scenario
+        scenario = get_random_scenario()
+        game_state["current_scenario"] = scenario
+
+    return {
+        "state": game_state,
+        "scenario": scenario
+    }
+
+
+@app.route("/api/decision/<choice>")
+def api_decision(choice):
+    global game_state
+
+    if game_state is None:
+        return {"error": "No game"}
+
+    if choice == "1":
+        game_state = next_turn(game_state, "good")
+    elif choice == "2":
+        game_state = next_turn(game_state, "neutral")
+    else:
+        game_state = next_turn(game_state, "bad")
+
+    return {"status": "ok"}
 
 # =========================
 # RUN LOCAL ONLY

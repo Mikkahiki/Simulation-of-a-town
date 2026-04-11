@@ -326,3 +326,8 @@ NEWS_HEADLINES = [
 def random_news():
 
     return random.choice(NEWS_HEADLINES)
+
+
+#==================
+# API things
+#===================
