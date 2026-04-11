@@ -53,88 +53,111 @@
 <script src="/static/game.js"></script>
 
 <script>
-let co2Chart;
-let tempChart;
-
-function updateCharts(state){
-
-    const co2Data = state.co2_history;
-    const tempData = state.temp_history;
-    const labels = co2Data.map((_,i)=>i+1);
-
-    // CO2 chart
-    if(co2Chart){
-        co2Chart.destroy();
-    }
-
-    co2Chart = new Chart(document.getElementById("co2Chart"),{
-        type:"line",
-        data:{
-            labels:labels,
-            datasets:[{
-                label:"CO2",
-                data:co2Data
-            }]
+    let co2Chart;
+    let tempChart;
+    
+    function updateCharts(state){
+    
+        const co2Data = state.co2_history || [];
+        const tempData = state.temp_history || [];
+        const labels = co2Data.map((_,i)=>i+1);
+    
+        if(co2Chart){
+            co2Chart.destroy();
         }
-    });
-
-    // Temp chart
-    if(tempChart){
-        tempChart.destroy();
-    }
-
-    tempChart = new Chart(document.getElementById("tempChart"),{
-        type:"line",
-        data:{
-            labels:labels,
-            datasets:[{
-                label:"Temperature",
-                data:tempData
-            }]
+    
+        co2Chart = new Chart(document.getElementById("co2Chart"),{
+            type:"line",
+            data:{
+                labels:labels,
+                datasets:[{
+                    label:"CO2",
+                    data:co2Data
+                }]
+            }
+        });
+    
+        if(tempChart){
+            tempChart.destroy();
         }
-    });
-
-    // Risk text
-    let risk = "Low";
-
-    if(state.temperature > 2.5){
-        risk = "Extreme";
-    } else if(state.temperature > 2){
-        risk = "High";
-    } else if(state.temperature > 1.5){
-        risk = "Moderate";
+    
+        tempChart = new Chart(document.getElementById("tempChart"),{
+            type:"line",
+            data:{
+                labels:labels,
+                datasets:[{
+                    label:"Temperature",
+                    data:tempData
+                }]
+            }
+        });
+    
+        let risk = "Low";
+    
+        if(state.temperature > 2.5){
+            risk = "Extreme";
+        } else if(state.temperature > 2){
+            risk = "High";
+        } else if(state.temperature > 1.5){
+            risk = "Moderate";
+        }
+    
+        document.getElementById("risk-text").innerText = risk;
     }
-
-    document.getElementById("risk-text").innerText = risk;
-}
-
-
-// OVERRIDE loadGame to include charts
-async function loadGame(){
-
-    const res = await fetch("/api/state");
-    const data = await res.json();
-
-    const state = data.state;
-
-    document.getElementById("day").innerText = state.day;
-    document.getElementById("temp").innerText = state.temperature.toFixed(2);
-    document.getElementById("co2").innerText = state.co2_tons;
-    document.getElementById("eco").innerText = state.economy;
-    document.getElementById("pub").innerText = state.public;
-
-    document.getElementById("scenario-title").innerText = data.scenario.title;
-    document.getElementById("scenario-text").innerText = data.scenario.text;
-
-    document.getElementById("choice1").innerText = data.scenario.good.text;
-    document.getElementById("choice2").innerText = data.scenario.neutral.text;
-    document.getElementById("choice3").innerText = data.scenario.bad.text;
-
-    updateCharts(state);
-}
-
-window.onload = loadGame;
-</script>
-
+    
+    
+    // ✅ FIXED loadGame
+    async function loadGame(){
+    
+        const res = await fetch("/api/state");
+        const data = await res.json();
+    
+        const state = data.state;
+    
+        // ✅ HANDLE GAME OVER FIRST
+        if(data.game_over){
+    
+            document.getElementById("scenario-title").innerText = "Simulation Complete";
+    
+            document.getElementById("scenario-text").innerText =
+                (state.ending || "") + "\n\n" + (state.analysis || "");
+    
+            document.getElementById("choice1").style.display = "none";
+            document.getElementById("choice2").style.display = "none";
+            document.getElementById("choice3").style.display = "none";
+    
+            updateCharts(state);
+            return;
+        }
+    
+        // ✅ NORMAL GAME
+        document.getElementById("day").innerText = state.day;
+        document.getElementById("temp").innerText = state.temperature.toFixed(2);
+        document.getElementById("co2").innerText = state.co2_tons;
+        document.getElementById("eco").innerText = state.economy;
+        document.getElementById("pub").innerText = state.public;
+    
+        // ⚠️ SAFE scenario access
+        if(data.scenario){
+            document.getElementById("scenario-title").innerText = data.scenario.title;
+            document.getElementById("scenario-text").innerText = data.scenario.text;
+    
+            document.getElementById("choice1").innerText = data.scenario.good.text;
+            document.getElementById("choice2").innerText = data.scenario.neutral.text;
+            document.getElementById("choice3").innerText = data.scenario.bad.text;
+        }
+    
+        updateCharts(state);
+    }
+    
+    
+    // ✅ FIXED decision (prevents race issues)
+    async function makeDecision(choice){
+        await fetch("/api/decision/" + choice);
+        await loadGame();
+    }
+    
+    window.onload = loadGame;
+    </script>
 </body>
 </html>

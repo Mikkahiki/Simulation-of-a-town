@@ -428,30 +428,30 @@ def run_game():
     dashboard(state)
     export_results(state)
 
-#==========================
-# start game function
-#==========================
+# ===========================
+# START GAME (WEB)
+# ===========================
 def start_game():
     state = create_state()
     initialize_scenarios()
 
-    from scenarios import get_random_scenario
     state["current_scenario"] = get_random_scenario()
 
     return state
 
-#==========================
-# next turn choices
-#==========================
 
+# ===========================
+# NEXT TURN (WEB ENGINE)
+# ===========================
 def next_turn(state, choice_type):
 
-    # 🚨 STOP GAME AT DAY 15
-    if state["day"] >= 15:
-        return state
+    # SAFETY: ensure scenario exists
+    if state.get("current_scenario") is None:
+        state["current_scenario"] = get_random_scenario()
 
-    scenario = state.get("current_scenario")
+    scenario = state["current_scenario"]
 
+    # MAP CHOICE
     if choice_type == "good":
         choice = scenario["good"]
     elif choice_type == "neutral":
@@ -459,20 +459,37 @@ def next_turn(state, choice_type):
     else:
         choice = scenario["bad"]
 
+    # APPLY SYSTEMS
     apply_choice(state, choice)
     policy_tracker(state, choice)
     log_decision(state, scenario, choice)
 
     daily_update(state)
 
+    # INCREMENT DAY
     state["day"] += 1
 
-    # 🚨 CHECK IF GAME ENDS
+    # =========================
+    # END GAME CONDITION
+    # =========================
     if state["day"] > 15:
+
         state["game_over"] = True
-    else:
-        from scenarios import get_random_scenario
-        state["current_scenario"] = get_random_scenario()
+
+        # ✅ STORE ENDING + ANALYSIS (IMPORTANT FOR WEB)
+        state["ending"] = check_ending(state)
+
+        try:
+            state["analysis"] = full_analysis(state)
+        except:
+            state["analysis"] = "Analysis unavailable"
+
+        return state
+
+    # =========================
+    # NEXT SCENARIO
+    # =========================
+    state["current_scenario"] = get_random_scenario()
 
     return state
 

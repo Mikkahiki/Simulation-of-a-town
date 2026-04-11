@@ -1,8 +1,24 @@
-async function loadGame(){
+async function loadGame() {
 
     const res = await fetch("/api/state");
     const data = await res.json();
 
+    // ✅ GAME OVER CHECK FIRST
+    if (data.game_over) {
+
+        document.getElementById("scenario-title").innerText = "Simulation Complete";
+
+        document.getElementById("scenario-text").innerText =
+            (data.state.ending || "") + "\n\n" + (data.state.analysis || "");
+
+        document.getElementById("choice1").style.display = "none";
+        document.getElementById("choice2").style.display = "none";
+        document.getElementById("choice3").style.display = "none";
+
+        return;
+    }
+
+    // ✅ NORMAL GAME UPDATE
     document.getElementById("day").innerText = data.state.day;
     document.getElementById("temp").innerText = data.state.temperature;
     document.getElementById("co2").innerText = data.state.co2_tons;
@@ -17,29 +33,12 @@ async function loadGame(){
     document.getElementById("choice3").innerText = data.scenario.bad.text;
 }
 
-async function makeDecision(choice){
+
+async function makeDecision(choice) {
 
     await fetch("/api/decision/" + choice);
     loadGame();
 
-}
-
-if(data.game_over){
-
-    document.getElementById("scenario-title").innerText = "Simulation Complete";
-
-    document.getElementById("scenario-text").innerText =
-        data.state.ending + "\n\n" + data.state.analysis;
-
-    document.getElementById("choice1").style.display = "none";
-    document.getElementById("choice2").style.display = "none";
-    document.getElementById("choice3").style.display = "none";
-
-    return;
-}
-
-if (data.game_over) {
-    window.location.href = "/end";
 }
 
 window.onload = loadGame;

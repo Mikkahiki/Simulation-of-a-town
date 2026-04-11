@@ -4,6 +4,9 @@ import os
 
 import matplotlib
 
+from analysis import full_analysis
+from endings import check_ending
+
 matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
@@ -144,9 +147,12 @@ def api_state():
         game_state = start_game()
         game_state["game_over"] = False
 
-    # If game ended → return flag
     if game_state["day"] > 15:
-        game_state["game_over"] = True
+      game_state["game_over"] = True
+
+    if "ending" not in game_state:
+        game_state["ending"] = check_ending(game_state)
+        game_state["analysis"] = full_analysis(game_state)
 
     scenario = game_state.get("current_scenario")
 
@@ -175,6 +181,7 @@ def api_decision(choice):
     if game_state.get("game_over"):
         return jsonify({"error": "Game over"})
 
+    # Apply decision
     if choice == "1":
         game_state = next_turn(game_state, "good")
     elif choice == "2":
@@ -182,9 +189,13 @@ def api_decision(choice):
     else:
         game_state = next_turn(game_state, "bad")
 
-    # ✅ STOP AT DAY 15
+    # ✅ FINAL TURN HANDLING
     if game_state["day"] > 15:
         game_state["game_over"] = True
+
+        # 🔥 THIS WAS MISSING
+        game_state["ending"] = check_ending(game_state)
+        game_state["analysis"] = full_analysis(game_state)
 
     return jsonify({
         "status": "ok",
