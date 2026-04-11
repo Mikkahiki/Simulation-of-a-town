@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulation Complete</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        .end-container{
+            padding:30px;
+            color:white;
+        }
+
+        .box{
+            background:#102a43;
+            padding:20px;
+            margin:15px 0;
+            border-radius:12px;
+        }
+
+        .crisis{
+            color:#ff4d4d;
+            font-weight:bold;
+        }
+
+        .success{
+            color:#2fa4ff;
+            font-weight:bold;
+        }
+
+        button{
+            padding:12px 20px;
+            margin-top:20px;
+            border:none;
+            border-radius:8px;
+            background:#2fa4ff;
+            color:white;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#1c7ed6;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="topbar">
+    🌍 FINAL REPORT
+</div>
+
+<div class="end-container">
+
+    <!-- FINAL STATS -->
+    <div class="box">
+        <h2>📊 Final Statistics</h2>
+        <p>Day: {{ state.day }}</p>
+        <p>Temperature: {{ state.temperature }} °C</p>
+        <p>CO₂: {{ state.co2_tons }}</p>
+        <p>Economy: {{ state.economy }}</p>
+        <p>Public Support: {{ state.public }}</p>
+    </div>
+
+    <!-- ENDING -->
+    <div class="box">
+        <h2>🌍 Outcome</h2>
+
+        {% if state.temperature > 2.0 %}
+            <p class="crisis">CLIMATE CASCADE</p>
+            <p>Tipping points triggered. System instability detected.</p>
+        {% else %}
+            <p class="success">STABILIZED SYSTEM</p>
+            <p>Climate remained within manageable limits.</p>
+        {% endif %}
+    </div>
+
+    <!-- ANALYSIS -->
+    <div class="box">
+        <h2>📊 Scientific Analysis</h2>
+        <p>{{ state.analysis }}</p>
+    </div>
+
+    <!-- OPTIONAL: HISTORY -->
+    <div class="box">
+        <h2>📈 Trend Summary</h2>
+        <p>CO₂ trend: {{ state.co2_history[-1] - state.co2_history[0] }}</p>
+        <p>Temperature stability measured across simulation.</p>
+    </div>
+
+    <!-- REPLAY -->
+    <div class="box">
+        <h2>🔁 Play Again</h2>
+        <button onclick="window.location.href='/start'">
+            Restart Simulation
+        </button>
+    </div>
+
+</div>
+
+</body>
+</html>
