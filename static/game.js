@@ -43,3 +43,16 @@ async function loadGame() {
     document.getElementById("choice2").innerText = data.scenario.neutral.text;
     document.getElementById("choice3").innerText = data.scenario.bad.text;
 }
+
+async function restartGame() {
+
+    await fetch("/api/restart");
+
+    // reload fresh state
+    await loadGame();
+
+    // show buttons again (in case they were hidden)
+    document.getElementById("choice1").style.display = "inline-block";
+    document.getElementById("choice2").style.display = "inline-block";
+    document.getElementById("choice3").style.display = "inline-block";
+}
